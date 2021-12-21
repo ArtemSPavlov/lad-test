@@ -1,10 +1,10 @@
 import https from "https";
+import {IncomingMessage} from "http";
 import {Transform, TransformCallback} from "stream";
 import {Buffer} from "buffer";
 
 import {spellerPath} from "./config";
 import {SpellerError} from "./SpellerError";
-import {IncomingMessage} from "http";
 
 export default class Speller extends Transform {
     _transform(chunk: Buffer, encoding: BufferEncoding, callback: TransformCallback): void {
@@ -28,8 +28,8 @@ export default class Speller extends Transform {
         const words: string[] = text.split(" ");
         errors.forEach(error => {
                 const index: number = words.indexOf(error.word);
-                const fixedWord: string = error.s[0];
-                if (index !== -1 && fixedWord) words[index] = fixedWord;
+                const correctedWord: string = error.s[0];
+                if (index !== -1 && correctedWord) words[index] = correctedWord;
             }
         )
         return words.join(" ");
