@@ -3,6 +3,7 @@ import http, {IncomingMessage, RequestListener, ServerResponse} from "http";
 import {port} from "./config";
 import SizeConvertor from "./SizeConvertor";
 import Speller from "./Speller";
+import HeadersFilter from "./HeadersFilter";
 
 const router = (path: string, method: string): RequestListener | undefined => {
     if (path === "/" && method === "POST") {
@@ -13,10 +14,13 @@ const router = (path: string, method: string): RequestListener | undefined => {
                 res.end("Internal server error");
             }
 
+           const headersFilter: HeadersFilter = new HeadersFilter();
            const sizeConvertor: SizeConvertor = new SizeConvertor();
            const speller: Speller = new Speller();
 
             req
+                .pipe(headersFilter)
+                .on("error", errorHandler)
                 .pipe(sizeConvertor)
                 .on("error", errorHandler)
                 .pipe(speller)
