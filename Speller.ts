@@ -8,8 +8,8 @@ import {SpellerError} from "./SpellerError";
 
 export default class Speller extends Transform {
     _transform(chunk: Buffer, encoding: BufferEncoding, callback: TransformCallback): void {
-        try {
-            https.get(spellerPath + chunk.toString(), async (res: IncomingMessage): Promise<void> => {
+        https.get(spellerPath + chunk.toString(), async (res: IncomingMessage): Promise<void> => {
+            try {
                 const buffers: Buffer[] = [];
                 for await (const chunk of res) buffers.push(chunk);
                 const buffer: Buffer = Buffer.concat(buffers);
@@ -18,10 +18,10 @@ export default class Speller extends Transform {
                     ? Speller.fixText(chunk.toString(), errors)
                     : chunk.toString();
                 callback(null, result);
-            });
-        } catch (e) {
-            console.log(e);
-        }
+            } catch (e) {
+                callback(e as Error);
+            }
+        });
     }
 
     private static fixText (text: string, errors: SpellerError[]): string {
